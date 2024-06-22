@@ -1,0 +1,36 @@
+---
+- name: Load role variables
+  tags:
+    - vars
+  ansible.builtin.include_vars:
+    file: "{{ included_vars }}"
+  with_first_found:
+    - files:
+        - "{{ ansible_distribution | lower }}-{{ ansible_distribution_version | lower }}.yml"
+        - "{{ ansible_distribution | lower }}.yml"
+        - "{{ ansible_os_family | lower }}.yml"
+        - "{{ ansible_system | lower }}.yml"
+        - "main.yml"
+      paths:
+        - "vars"
+      skip: true
+  loop_control:
+    loop_var: included_vars
+
+- name: Load role tasks
+  tags:
+    - tasks
+  ansible.builtin.include_tasks:
+    file: "{{ included_tasks }}"
+  with_first_found:
+    - files:
+        - "{{ ansible_distribution | lower }}-{{ ansible_distribution_version | lower }}.yml"
+        - "{{ ansible_distribution | lower }}.yml"
+        - "{{ ansible_os_family | lower }}.yml"
+        - "{{ ansible_system | lower }}.yml"
+        - "main.yml"
+      paths:
+        - "tasks/distribution"
+      skip: true
+  loop_control:
+    loop_var: included_tasks

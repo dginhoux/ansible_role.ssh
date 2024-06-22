@@ -1,0 +1,98 @@
+---
+
+- name: Install ssh pkg
+  when:
+    - ssh_install_pkgs
+  become: true
+  loop: "{{ ssh_pkgs_list | flatten(levels=1) }}"
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: "present"
+
+
+- name: Configure ssh server
+  when:
+    - ssh_server_generate_host_config
+  block:
+    - name: Prepare ssh server opt
+      ansible.builtin.set_fact:
+        ssh_server_opts: "{{ ( ssh_server_opt_default + ssh_server_opt_spec + ssh_server_opt_spec_group + ssh_server_opt_spec_host ) | unique }}"
+        # ssh_server_opts: "{{ ssh_server_opts | unique }}"
+    - name: Prepare ssh server cfg
+      ansible.builtin.set_fact:
+        ssh_server_cfgs: "{{ ssh_server_cfg_default | combine(ssh_server_cfg_spec | default({})) | combine(ssh_server_cfg_spec_group | default({})) | combine(ssh_server_cfg_spec_host | default({}))  }}"
+    - name: Create main ssh server config file
+      become: true
+      ansible.builtin.template:
+        dest: "{{ ssh_server_main_config_file }}"
+        src: "ssh_server.j2"
+        mode: "0644"
+        owner: root
+        group: root
+        validate: "sshd -t -f %s"
+
+
+- name: Configure ssh client
+  when:
+    - ssh_client_generate_host_config
+  block:
+    - name: Prepare ssh client opt
+      ansible.builtin.set_fact:
+        ssh_client_opts: "{{ ( ssh_client_opt_default + ssh_client_opt_spec + ssh_client_opt_spec_group + ssh_client_opt_spec_host ) | unique }}"
+    - name: Prepare ssh client cfg
+      ansible.builtin.set_fact:
+        ssh_client_cfgs: "{{ ssh_client_cfg_default | combine(ssh_client_cfg_spec | default({})) | combine(ssh_client_cfg_spec_group | default({})) | combine(ssh_client_cfg_spec_host | default({}))  }}"
+    - name: Create main ssh client config file
+      become: true
+      ansible.builtin.template:
+        dest: "{{ ssh_client_main_config_file }}"
+        src: "ssh_client.j2"
+        mode: "0644"
+        owner: root
+        group: root
+
+
+- name: Regenerate ssh server host keys
+  when:
+    - ssh_server_regenerate_host_keys
+  block:
+    - name: Find ssh server host keys
+      become: true
+      register: files_to_delete
+      ansible.builtin.find:
+        paths: "{{ ssh_server_host_keys_path }}"
+        recurse: false
+        patterns:
+          - 'ssh_host_*_key'
+          - 'ssh_host_*_key.pub'
+
+    - name: Build list of ssh server host keys
+      ansible.builtin.set_fact:
+        files_to_delete_list: "{{ files_to_delete.files | map(attribute='path') | list }}"
+
+    - name: Remove ssh server host keys
+      become: true
+      when:
+        - files_to_delete.files is iterable
+      loop: "{{ files_to_delete.files | flatten }}"
+      loop_control:
+        label: "{{ item.path }}"
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: absent
+
+    - name: Generate new ssh server keys
+      become: true
+      ansible.builtin.shell:
+        cmd: "ssh-keygen -A"
+
+
+- name: Start or restart and enable ssh server service
+  become: true
+  when:
+    - ssh_server_service_start_or_restart_and_enable
+  ansible.builtin.service:
+    name: "{{ ssh_server_service_name }}"
+    enabled: true
+    state: restarted
+

@@ -1,0 +1,112 @@
+---
+
+ssh_install_pkgs: true
+ssh_server_service_start_or_restart_and_enable: true
+ssh_server_regenerate_host_keys: false
+ssh_server_generate_host_config: true
+ssh_client_generate_host_config: true
+
+
+################# ssh client configuration ###################
+ssh_client_opt_spec: []
+ssh_client_opt_spec_group: []
+ssh_client_opt_spec_host: []
+
+ssh_client_cfg_spec: {}
+ssh_client_cfg_spec_group: {}
+ssh_client_cfg_spec_host: {}
+
+
+################# ssh server configuration ###################
+ssh_server_opt_spec: []
+ssh_server_opt_spec_group: []
+ssh_server_opt_spec_host: []
+
+ssh_server_cfg_spec: {}
+ssh_server_cfg_spec_group: {}
+ssh_server_cfg_spec_host: {}
+
+
+################# ssh client default configuration ###################
+ssh_client_opt_default:
+  - "SendEnv"
+  - "HashKnownHosts"
+ssh_client_cfg_default:
+  SendEnv: "LANG LC_*"
+  HashKnownHosts: "yes"
+  Hosts: {}
+
+
+################# ssh server default configuration ###################
+ssh_server_opt_default:
+  - "Port"
+  - "ListenAddress"
+  - "Banner"
+  - "Protocol"
+  - "HostKey"
+  - "SyslogFacility"
+  - "LogLevel"
+  - "LoginGraceTime"
+  - "PermitRootLogin"
+  - "StrictModes"
+  - "PubkeyAuthentication"
+  - "IgnoreRhosts"
+  - "HostbasedAuthentication"
+  - "IgnoreUserKnownHosts"
+  - "PermitEmptyPasswords"
+  - "ChallengeResponseAuthentication"
+  - "PasswordAuthentication"
+  - "GSSAPIAuthentication"
+  - "GSSAPICleanupcredentials"
+  - "GSSAPIStrictacceptorcheck"
+  - "X11UseLocalhost"
+  - "X11Forwarding"
+  - "X11DisplayOffset"
+  - "PrintMotd"
+  - "PrintLastLog"
+  - "TCPKeepAlive"
+  - "ClientAliveCountMax"
+  - "ClientAliveInterval"
+  - "AcceptEnv"
+  - "UsePAM"
+  - "UseDNS"
+  - "AllowGroups"
+  - "Subsystem"
+
+ssh_server_cfg_default:
+  Port: 22
+  ListenAddress: 0.0.0.0
+  Banner: "no"
+  Protocol: 2
+  HostKey:
+    /etc/ssh/ssh_host_rsa_key: null
+    /etc/ssh/ssh_host_ecdsa_key: null
+  SyslogFacility: AUTH
+  LogLevel: INFO
+  LoginGraceTime: 120
+  PermitRootLogin: "yes"
+  StrictModes: "yes"
+  PubkeyAuthentication: "yes"
+  IgnoreRhosts: "yes"
+  HostbasedAuthentication: "no"
+  IgnoreUserKnownHosts: "yes"
+  PermitEmptyPasswords: "no"
+  ChallengeResponseAuthentication: "no"
+  PasswordAuthentication: "yes"
+  GSSAPIAuthentication: "yes"
+  GSSAPICleanupcredentials: "yes"
+  GSSAPIStrictacceptorcheck: "no"
+  X11UseLocalhost: "no"
+  X11Forwarding: "yes"
+  X11DisplayOffset: 10
+  PrintMotd: "no"
+  PrintLastLog: "yes"
+  TCPKeepAlive: "yes"
+  ClientAliveCountMax: 5
+  ClientAliveInterval: 60
+  AcceptEnv: "LANG LC_* RD_*"
+  UsePAM: "yes"
+  UseDNS: "yes"
+  # AllowGroups: "ssh"
+  Subsystem: "{{ ssh_server_sftp_subsystem }}"
+  Matchs: {}

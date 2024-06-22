@@ -1,0 +1,14 @@
+---
+
+ssh_pkgs_list:
+  - openssh-server
+  - openssh-clients
+  - sshpass
+  - rsync
+
+ssh_server_service_name: sshd
+
+ssh_client_main_config_file: /etc/ssh/ssh_config
+ssh_server_main_config_file: /etc/ssh/sshd_config
+ssh_server_host_keys_path: /etc/ssh
+ssh_server_sftp_subsystem: sftp /usr/libexec/openssh/sftp-server

@@ -1,0 +1,23 @@
+# {{ ansible_managed }}
+
+{% if ssh_client_cfgs.Hosts is defined and ssh_client_cfgs.Hosts is iterable %}
+{% for host in ssh_client_cfgs.Hosts %}
+Host {{ host.rule }}
+{% if host.options is defined and host.options is iterable %}
+{% for opt in host.options %}
+  {{ opt }}
+{% endfor %}
+{% endif %}
+{% endfor %}
+{% endif %}
+
+Host *
+{% for opt in ssh_client_opts -%}
+{% if ssh_client_cfgs[opt] is mapping %}
+{% for i in ssh_client_cfgs[opt] %}
+    {{ opt }} {{ i }}
+{% endfor %}
+{% else %}
+  {{ opt }} {{ ssh_client_cfgs[opt] }}
+{% endif %}
+{% endfor %}

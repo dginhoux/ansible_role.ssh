@@ -1,0 +1,26 @@
+# {{ ansible_managed }}
+
+{% for opt in ssh_server_opts -%}
+{% if ssh_server_cfgs[opt] is defined %}
+{% if ssh_server_cfgs[opt] is mapping -%}
+{% for i in ssh_server_cfgs[opt] %}
+{{ opt }} {{ i }}
+{% endfor %}
+{% else -%}
+{{ opt }} {{ ssh_server_cfgs[opt] }}
+{% endif %}
+{% endif %}
+{% endfor %}
+
+{% if ssh_server_cfgs.Matchs is defined and ssh_server_cfgs.Matchs is iterable %}
+{% for match in ssh_server_cfgs.Matchs %}
+Match {{ match.rule }}
+{% if match.options is defined and match.options is iterable %}
+{% for opt in match.options %}
+  {{ opt }}
+{% endfor %}
+{% endif %}
+{% endfor %}
+{% endif %}
+
+
