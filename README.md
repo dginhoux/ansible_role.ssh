@@ -122,7 +122,7 @@ ssh_server_opt_default
 ```
 
 <br /><br />
-**NOTE**: Theses default variables are **ONLY** used when nothing is specified and role is started without anything (see variables sections below).<br />
+**NOTE**: Theses default variables contains common and generic configuration.<br />
 
 
 
