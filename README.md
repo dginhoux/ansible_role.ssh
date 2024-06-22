@@ -6,6 +6,11 @@
 
 This ansible role configure ssh server and ssh client.
 
+## ROADMAP
+
+- support for centralisation of pubkeys and pukeys command script
+- support for include files and deploy them... maybe in "raw" format
+
 
 
 ## REQUIREMENTS
