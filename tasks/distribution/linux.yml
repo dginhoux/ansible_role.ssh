@@ -96,3 +96,15 @@
     enabled: true
     state: restarted
 
+
+- name: Disable systemd ssh socket
+  become: true
+  when:
+    - ansible_service_mgr == "systemd"
+    - disable_systemd_ssh_socket
+  ansible.builtin.systemd:
+    name: "ssh.socket"
+    enabled: false
+    state: stopped
+    daemon_reload: true
+

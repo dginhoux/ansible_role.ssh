@@ -1,10 +1,15 @@
 ---
 
 ssh_install_pkgs: true
+
+
 ssh_server_service_start_or_restart_and_enable: true
 ssh_server_regenerate_host_keys: false
 ssh_server_generate_host_config: true
 ssh_client_generate_host_config: true
+
+
+disable_systemd_ssh_socket: true
 
 
 ################# ssh client configuration ###################
